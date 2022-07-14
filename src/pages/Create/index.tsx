@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "./layout/Header";
 import Aside from "./layout/Aside";
 import Footer from "./layout/Footer";
 import { Drawer, Tabs, Collapse, Button, Modal, Input } from "antd";
 import renderCollapse from "./components/renderCollapse";
+import { getBlogItem } from "../../util";
 
 const { TabPane } = Tabs;
 
@@ -28,39 +29,53 @@ export default function () {
   const [isAddingFile, setIsAddingFile] = useState(false);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newName, setNewName] = useState("");
+  const currentKeys = useRef<Array<number>>([]);
   const handleConfirmAdding = () => {
     let flag = true;
-    blog.map((item) => {
-      if (item.name === newName && item.isPage === isAddingFile) {
-        Modal.warn({ title: "添加失败，该名称已存在" });
-        flag = false;
-        return;
-      }
-    });
+    const fatherNode = getBlogItem(blog, currentKeys.current);
+    const depth = currentKeys.current.length;
+    const currentNode = fatherNode[currentKeys.current[depth - 1]];
+    if (currentNode)
+      currentNode.children.map((item) => {
+        if (item.name === newName && item.isPage === isAddingFile) {
+          Modal.warn({ title: "添加失败，该名称已存在" });
+          flag = false;
+          return;
+        }
+      });
     if (flag) {
-      setBlog(
-        blog.concat({
-          name: newName,
-          isPage: isAddingFile,
-          text: "",
-          children: [],
-        })
-      );
+      const obj = {
+        name: newName,
+        isPage: isAddingFile,
+        text: "",
+        children: [],
+      };
+      if (depth === 0) {
+        fatherNode.push(obj);
+      } else {
+        fatherNode[currentKeys.current[depth - 1]].children.push(obj);
+      }
+      setBlog(blog);
     }
     setNewName("");
     setIsAddingFolder(false);
     setIsAddingFile(false);
+    currentKeys.current = [];
   };
 
   // 操作回调函数
-  const handleAddFile = (keys: Array<Number>) => {
-    console.log(keys);
+  const handleAddFile = (keys: Array<number>) => {
+    currentKeys.current = keys;
+    setIsAddingFile(true);
   };
-  const handleAddFolder = (keys: Array<Number>) => {
-    console.log(keys);
+  const handleAddFolder = (keys: Array<number>) => {
+    currentKeys.current = keys;
+    setIsAddingFolder(true);
   };
-  const handleRemove = (keys: Array<Number>) => {
-    console.log(keys);
+  const handleRemove = (keys: Array<number>) => {
+    const fatherNode = getBlogItem(blog, keys);
+    fatherNode.splice(keys[keys.length - 1], 1);
+    setBlog(blog.concat());
   };
 
   return (
@@ -75,6 +90,7 @@ export default function () {
         onClose={() => setShowConfig(false)}
         title="配置网站"
         width={800}
+        placement="left"
       >
         <Tabs defaultActiveKey="1">
           <TabPane tab="内容设置" key="1">

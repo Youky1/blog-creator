@@ -11,7 +11,7 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route index element={<Index />} />
           <Route path="create" element={<Create />} />
         </Routes>
       </Router>
