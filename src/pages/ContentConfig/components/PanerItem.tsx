@@ -22,8 +22,8 @@ export default function PanerItem({
   handleRemove: MouseEventHandler<HTMLSpanElement>;
 }) {
   return (
-    <div>
-      <span className={className}>{text}</span>
+    <div className="panerl-item">
+      <p className={className}>{text}</p>
       {!isPage && (
         <>
           <Tooltip overlay="创建文件夹">

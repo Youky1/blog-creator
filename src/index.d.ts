@@ -1,3 +1,5 @@
+declare module "*.css";
+
 declare interface HeaderConfig {}
 declare interface AsideConfig {}
 declare interface FooterConfig {}

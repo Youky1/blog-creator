@@ -1,21 +1,22 @@
 import React from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, useRoutes } from "react-router-dom";
 import "antd/dist/antd.css";
-import "./App.css";
+import { Provider } from "react-redux";
 
-import Index from "./pages/Index";
-import Create from "./pages/Create";
+import store from "./redux";
+import routes from "./routes";
+
+function Routes() {
+  return useRoutes(routes);
+}
 
 function App() {
   return (
-    <div>
+    <Provider store={store}>
       <Router>
-        <Routes>
-          <Route index element={<Index />} />
-          <Route path="create" element={<Create />} />
-        </Routes>
+        <Routes />
       </Router>
-    </div>
+    </Provider>
   );
 }
 
