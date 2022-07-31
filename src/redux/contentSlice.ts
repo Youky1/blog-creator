@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-const initialState: { blog: Blog } = {
+const initialState: { blog: Blog; currentBlogContent: string } = {
   blog: [],
+  currentBlogContent: "",
 };
 const contentSlice = createSlice({
   name: "content",
@@ -9,9 +10,12 @@ const contentSlice = createSlice({
     setBlog(state, action) {
       state.blog = action.payload;
     },
+    setCurrentBlogContent(state, action) {
+      state.currentBlogContent = action.payload;
+    },
   },
 });
 
-export const { setBlog } = contentSlice.actions;
+export const { setBlog, setCurrentBlogContent } = contentSlice.actions;
 
 export default contentSlice.reducer;

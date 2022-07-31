@@ -11,7 +11,9 @@
     "@ant-design/icons": "^4.7.0",
     "@reduxjs/toolkit": "^1.8.3",
     "antd": "^4.21.4",
+    "for-editor": "^0.3.5",
     "lodash": "^4.17.21",
+    "markdown-it": "^13.0.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-redux": "^8.0.2",
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.182",
+    "@types/markdown-it": "^12.2.3",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",

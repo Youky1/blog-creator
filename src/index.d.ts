@@ -18,3 +18,17 @@ declare interface FooterContent {
   show: boolean;
   text: string;
 }
+
+interface AsideMenuItem {
+  title: string;
+  children: AsideMenu;
+}
+
+declare type AsideMenu = Array<AsideMenuItem>;
+
+declare interface HtmlArg {
+  title: string;
+  headerMenu: Array<string>;
+  asideMenu: asideMenu;
+  mainText: string;
+}

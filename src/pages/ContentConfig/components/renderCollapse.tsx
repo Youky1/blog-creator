@@ -3,38 +3,37 @@ import PanerItem from "./PanerItem";
 const { Panel } = Collapse;
 const renderCollapse = (
   blog: Blog,
-  currentKey: Array<Number> = [],
+  currentKey: Array<number> = [],
   handleAddFile: Function,
   handleAddFolder: Function,
-  handleRemove: Function
+  handleRemove: Function,
+  handleEdit: Function
 ) => {
   return blog.map((item, index) => {
     const key = currentKey.concat(index);
     if (item.isPage) {
       return (
-        <Panel
-          header={
-            <PanerItem
-              isPage={true}
-              text={item.name}
-              className="collapse-page"
-              handleRemove={() => handleRemove(key)}
-            />
-          }
+        <PanerItem
           key={item.name}
-          showArrow={false}
-        ></Panel>
+          isPage={true}
+          name={item.name}
+          text={item.text}
+          className="collapse-page"
+          handleRemove={() => handleRemove(key)}
+          handleEdit={() => handleEdit(key)}
+        />
       );
     } else {
       return (
         <Panel
           header={
             <PanerItem
-              text={item.name}
+              name={item.name}
               className="collapse-menu"
               handleAddFile={() => handleAddFile(key)}
               handleAddFolder={() => handleAddFolder(key)}
               handleRemove={() => handleRemove(key)}
+              handleEdit={() => handleEdit(key)}
             />
           }
           key={item.name}
@@ -45,7 +44,8 @@ const renderCollapse = (
               key,
               handleAddFile,
               handleAddFolder,
-              handleRemove
+              handleRemove,
+              handleEdit
             )}
           </Collapse>
         </Panel>

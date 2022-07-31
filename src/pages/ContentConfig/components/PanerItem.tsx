@@ -5,25 +5,37 @@ import {
   FolderOutlined,
 } from "@ant-design/icons";
 import { Tooltip } from "antd";
+import { useCurrentContent } from "../../../hooks";
 
-export default function PanerItem({
-  text,
-  isPage,
-  className,
-  handleAddFile,
-  handleAddFolder,
-  handleRemove,
-}: {
-  text: string;
+interface Param {
+  name: string;
   isPage?: boolean;
   className: string;
+  text?: string;
   handleAddFile?: MouseEventHandler<HTMLSpanElement>;
   handleAddFolder?: MouseEventHandler<HTMLSpanElement>;
   handleRemove: MouseEventHandler<HTMLSpanElement>;
-}) {
+  handleEdit: Function;
+}
+
+export default function PanerItem({
+  name,
+  isPage,
+  className,
+  text,
+  handleAddFile,
+  handleAddFolder,
+  handleRemove,
+  handleEdit,
+}: Param) {
+  const { setCurrentContent } = useCurrentContent();
+  const showCurrentContent = () => {
+    setCurrentContent(text || "");
+    handleEdit();
+  };
   return (
-    <div className="panerl-item">
-      <p className={className}>{text}</p>
+    <div className="panerl-item" onClick={showCurrentContent}>
+      <span className={className}>{name}</span>
       {!isPage && (
         <>
           <Tooltip overlay="创建文件夹">
