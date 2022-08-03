@@ -27,8 +27,8 @@ interface AsideMenuItem {
 declare type AsideMenu = Array<AsideMenuItem>;
 
 declare interface HtmlArg {
-  title: string;
+  name: string;
   headerMenu: Array<string>;
-  asideMenu: asideMenu;
-  mainText: string;
+  asideMenu: AsideMenu;
+  text: string;
 }
