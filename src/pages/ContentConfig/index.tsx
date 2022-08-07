@@ -11,8 +11,7 @@ export default function () {
   const { blog, setBlog } = useBlog();
 
   // 新增顶层文件/目录
-  const [isAddingFile, setIsAddingFile] = useState(false);
-  const [isAddingFolder, setIsAddingFolder] = useState(false);
+  const [currentAdding, setCurrentAdding] = useState("");
   const [newName, setNewName] = useState("");
   const currentKeys = useRef<Array<number>>([]);
   const editingFile = useRef<Array<number>>([]);
@@ -24,11 +23,12 @@ export default function () {
     let flag = true;
     const fatherNode = getBlogItem(blog, currentKeys.current);
     const depth = currentKeys.current.length;
+    const isPage = currentAdding === "文件";
 
     // 同名检查
     const currentNode = fatherNode[currentKeys.current[depth - 1]];
     (depth > 0 ? currentNode.children : fatherNode).map((item) => {
-      if (item.name === newName && item.isPage === isAddingFile) {
+      if (item.name === newName && item.isPage === isPage) {
         Modal.warn({ title: "添加失败，该名称已存在" });
         flag = false;
         return;
@@ -38,7 +38,7 @@ export default function () {
     if (flag) {
       const obj = {
         name: newName,
-        isPage: isAddingFile,
+        isPage,
         text: "",
         children: [],
       };
@@ -50,19 +50,18 @@ export default function () {
       setBlog(blog);
     }
     setNewName("");
-    setIsAddingFolder(false);
-    setIsAddingFile(false);
+    setCurrentAdding("");
     currentKeys.current = [];
   };
 
   // 操作回调函数
   const handleAddFile = (keys: Array<number>) => {
     currentKeys.current = keys;
-    setIsAddingFile(true);
+    setCurrentAdding("文件");
   };
   const handleAddFolder = (keys: Array<number>) => {
     currentKeys.current = keys;
-    setIsAddingFolder(true);
+    setCurrentAdding("目录");
   };
   const handleRemove = (keys: Array<number>) => {
     Modal.confirm({
@@ -80,8 +79,8 @@ export default function () {
 
   // 修改文件内容
   const { currentContent, setCurrentContent } = useCurrentContent();
-  const [fileContent, sertFileContent] = useState(currentContent);
   const handleSaveChange = (value: string) => {
+    setCurrentContent(value);
     const fatherNode = getBlogItem(blog, editingFile.current);
     const depth = editingFile.current[editingFile.current.length - 1];
     fatherNode[depth].text = value;
@@ -92,8 +91,8 @@ export default function () {
     <div className="page-box">
       {/* 配置窗口 */}
       <div className="aside-box">
-        <Button onClick={() => setIsAddingFolder(true)}>添加目录</Button>
-        <Button onClick={() => setIsAddingFile(true)}>添加文件</Button>
+        <Button onClick={() => setCurrentAdding("目录")}>添加目录</Button>
+        <Button onClick={() => setCurrentAdding("文件")}>添加文件</Button>
         <Button onClick={() => console.log(blog)}>Blog</Button>
         <Collapse defaultActiveKey={["1"]} style={{ marginTop: 20 }}>
           {renderCollapse(
@@ -109,11 +108,10 @@ export default function () {
 
       {/* 内容填写弹出窗口 */}
       <Modal
-        title={isAddingFile ? "新建文件名称" : "新建目录名称"}
-        visible={isAddingFile || isAddingFolder}
+        title={`${currentAdding}名称`}
+        visible={currentAdding.length > 0}
         onCancel={() => {
-          setIsAddingFolder(false);
-          setIsAddingFile(false);
+          setCurrentAdding("");
           setNewName("");
         }}
         onOk={handleConfirmAdding}
@@ -125,7 +123,7 @@ export default function () {
       <div className="content-box">
         <Editor
           value={currentContent}
-          onChange={(value) => setCurrentContent(value)}
+          onChange={handleSaveChange}
           height="100%"
           onSave={handleSaveChange}
         />

@@ -8,10 +8,8 @@ import { Tooltip } from "antd";
 import { useCurrentContent } from "../../../hooks";
 
 interface Param {
-  name: string;
-  isPage?: boolean;
+  blog: BlogItem;
   className: string;
-  text?: string;
   handleAddFile?: MouseEventHandler<HTMLSpanElement>;
   handleAddFolder?: MouseEventHandler<HTMLSpanElement>;
   handleRemove: MouseEventHandler<HTMLSpanElement>;
@@ -19,10 +17,8 @@ interface Param {
 }
 
 export default function PanerItem({
-  name,
-  isPage,
+  blog,
   className,
-  text,
   handleAddFile,
   handleAddFolder,
   handleRemove,
@@ -30,13 +26,13 @@ export default function PanerItem({
 }: Param) {
   const { setCurrentContent } = useCurrentContent();
   const showCurrentContent = () => {
-    setCurrentContent(text || "");
+    setCurrentContent(blog.text || "");
     handleEdit();
   };
   return (
     <div className="panerl-item" onClick={showCurrentContent}>
-      <span className={className}>{name}</span>
-      {!isPage && (
+      <span className={className}>{blog.name}</span>
+      {!blog.isPage && (
         <>
           <Tooltip overlay="创建文件夹">
             <FolderOutlined

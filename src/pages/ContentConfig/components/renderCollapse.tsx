@@ -15,9 +15,7 @@ const renderCollapse = (
       return (
         <PanerItem
           key={item.name}
-          isPage={true}
-          name={item.name}
-          text={item.text}
+          blog={item}
           className="collapse-page"
           handleRemove={() => handleRemove(key)}
           handleEdit={() => handleEdit(key)}
@@ -28,7 +26,7 @@ const renderCollapse = (
         <Panel
           header={
             <PanerItem
-              name={item.name}
+              blog={item}
               className="collapse-menu"
               handleAddFile={() => handleAddFile(key)}
               handleAddFolder={() => handleAddFolder(key)}
