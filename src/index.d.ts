@@ -11,24 +11,21 @@ interface BlogItem {
   text: string;
   children: Array<BlogItem>;
 }
-
 declare type Blog = Array<BlogItem>;
 
-declare interface FooterContent {
-  show: boolean;
-  text: string;
-}
-
-interface AsideMenuItem {
+declare type AsideMenu = Array<{
   title: string;
   children: AsideMenu;
-}
+}>;
 
-declare type AsideMenu = Array<AsideMenuItem>;
-
+declare type HeaderMenu = Array<{
+  text: string;
+  isPage: boolean;
+}>;
 declare interface HtmlArg {
   name: string;
-  headerMenu: Array<string>;
+  headerMenu: HeaderMenu;
   asideMenu: AsideMenu;
   text: string;
+  depth: number;
 }

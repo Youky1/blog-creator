@@ -1,33 +1,40 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { makePage } from "./content/common";
-import { makeIndexPage } from "./content/root";
+import { makePage } from "./content/page";
+import { makeIndexPage } from "./content/folder";
 import { makeCss } from "./style";
 
 // 生成网站index页面
 const generateIndexHtml = (root: JSZip, blog: Blog) => {
-  root.file("index.html", makeIndexPage("主页", blog));
+  root.file("index.html", makeIndexPage("主页", blog, 0));
 };
 
 // 生成文件夹级别index页面，若没有text则生成目录作为默认内容
-const generateFolderHtml = (node: BlogItem) =>
-  node.text ? makePage(node) : makeIndexPage(node.name, node.children);
+const generateFolderHtml = (
+  root: Blog,
+  node: BlogItem,
+  depth: number,
+  rootIndex: number
+) =>
+  node.text
+    ? makePage(root, node, depth, rootIndex)
+    : makeIndexPage(node.name, node.children, depth);
 
-// 以给定目录为跟节点，便利Blog对象生成文件结构
-const generateHtml = (root: JSZip, blog: Blog) => {
-  blog.map((item) => {
+// 以给定目录为跟节点，遍历Blog对象生成文件结构
+const generateHtml = (
+  root: JSZip,
+  blog: Blog,
+  depth = 0,
+  rootIndex?: number
+) => {
+  blog.map((item, index) => {
+    const i = rootIndex || index;
     if (item.isPage) {
-      root.file(item.name + ".html", makePage(item));
+      root.file(item.name + ".html", makePage(blog, item, depth, i));
     } else {
       const folder = root.folder(item.name) as JSZip;
-      item.children.map((child) => {
-        if (child.isPage) {
-          folder.file(child.name + ".html", makePage(child));
-        } else {
-          generateHtml(folder, child.children);
-          folder.file("index.html", generateFolderHtml(item));
-        }
-      });
+      folder.file("index.html", generateFolderHtml(blog, item, depth, i));
+      generateHtml(folder, item.children, depth + 1, i);
     }
   });
 };
@@ -46,6 +53,7 @@ export const generateZip = (blog: Blog) => {
   generateHtml(zip, blog);
   generateCss(zip);
 
+  console.log(zip);
   // 下载文件
   zip
     .generateAsync({ type: "blob" })
